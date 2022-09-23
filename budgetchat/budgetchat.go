@@ -67,13 +67,13 @@ func (s *Server) handleConnection(conn net.Conn) {
 		return
 	}
 
-	client := Client{
-		Name:       name,
-		Inbox:      make(chan string, 10),
-		Outbox:     make(chan string, 1),
-		Disconnect: make(chan interface{}),
-	}
+	client := newClient(name)
+	s.broadcastAll(fmt.Sprintf("%s has entered the room", client.Name))
+	client.Inbox <- fmt.Sprintf("* The room contains: %s", strings.Join(s.listClientNames(), ", "))
+
 	s.registerClient(&client)
+
+	defer s.broadcastAll(fmt.Sprintf("%s has left the room", client.Name))
 	defer s.disconnectClient(&client)
 
 	go client.readInputs(scanner)
@@ -93,10 +93,16 @@ func (s *Server) handleConnection(conn net.Conn) {
 	}
 }
 
-func (s *Server) registerClient(client *Client) {
-	s.broadcastAll(fmt.Sprintf("%s has entered the room", client.Name))
-	client.Inbox <- fmt.Sprintf("* The room contains: %s", strings.Join(s.listClientNames(), ", "))
+func newClient(name Name) Client {
+	return Client{
+		Name:       name,
+		Inbox:      make(chan string, 10),
+		Outbox:     make(chan string, 1),
+		Disconnect: make(chan interface{}),
+	}
+}
 
+func (s *Server) registerClient(client *Client) {
 	s.ClientsMux.Lock()
 	s.Clients[client.Name] = client
 	s.ClientsMux.Unlock()
@@ -106,8 +112,6 @@ func (s *Server) disconnectClient(client *Client) {
 	s.ClientsMux.Lock()
 	delete(s.Clients, client.Name)
 	s.ClientsMux.Unlock()
-
-	s.broadcastAll(fmt.Sprintf("%s has left the room", client.Name))
 }
 
 func (s *Server) broadcast(sender *Client, msg string) {
