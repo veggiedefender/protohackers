@@ -1,4 +1,4 @@
-package main
+package means
 
 import (
 	"encoding/binary"
@@ -76,8 +76,10 @@ func handleConnection(conn net.Conn) {
 	}
 }
 
-func main() {
-	listener, err := net.Listen("tcp", "0.0.0.0:8080")
+type Server struct{}
+
+func (s Server) Listen(addr string) {
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatal(err)
 	}
