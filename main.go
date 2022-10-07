@@ -8,6 +8,7 @@ import (
 
 	"github.com/veggiedefender/protohackers/budgetchat"
 	"github.com/veggiedefender/protohackers/means"
+	"github.com/veggiedefender/protohackers/unusualdatabase"
 )
 
 var (
@@ -30,6 +31,7 @@ func main() {
 	challenges := map[int]Challenge{
 		2: means.Server{},
 		3: budgetchat.NewServer(),
+		4: unusualdatabase.NewServer(),
 	}
 
 	srv, ok := challenges[*challengeNum]
