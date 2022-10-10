@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 
 	"github.com/veggiedefender/protohackers/budgetchat"
 	"github.com/veggiedefender/protohackers/means"
 	"github.com/veggiedefender/protohackers/primetime"
 	"github.com/veggiedefender/protohackers/smoketest"
 	"github.com/veggiedefender/protohackers/unusualdatabase"
+	"golang.org/x/exp/maps"
 )
 
 var (
@@ -25,17 +27,19 @@ type Challenge interface {
 func main() {
 	flag.Parse()
 
-	if *challengeNum == -1 {
-		fmt.Println("challenge is required")
-		os.Exit(1)
-	}
-
 	challenges := map[int]Challenge{
 		0: smoketest.Server{},
 		1: primetime.Server{},
 		2: means.Server{},
 		3: budgetchat.NewServer(),
 		4: unusualdatabase.NewServer(),
+	}
+
+	if *challengeNum == -1 {
+		implemented := maps.Keys(challenges)
+		sort.Ints(implemented)
+		fmt.Printf("challenge is required: %v\n", implemented)
+		os.Exit(1)
 	}
 
 	srv, ok := challenges[*challengeNum]
