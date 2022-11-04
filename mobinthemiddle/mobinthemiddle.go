@@ -11,7 +11,7 @@ type Server struct{}
 
 var BogusCoinAddress = regexp.MustCompile(`(\b)7[a-zA-Z0-9_]{25,34}(\n| )`)
 
-func (s *Server) Listen(addr string) {
+func (s Server) Listen(addr string) {
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatal(err)

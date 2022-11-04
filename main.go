@@ -12,6 +12,7 @@ import (
 	"github.com/veggiedefender/protohackers/mobinthemiddle"
 	"github.com/veggiedefender/protohackers/primetime"
 	"github.com/veggiedefender/protohackers/smoketest"
+	"github.com/veggiedefender/protohackers/speeddaemon"
 	"github.com/veggiedefender/protohackers/unusualdatabase"
 	"golang.org/x/exp/maps"
 )
@@ -34,7 +35,8 @@ func main() {
 		2: means.Server{},
 		3: budgetchat.NewServer(),
 		4: unusualdatabase.NewServer(),
-		5: &mobinthemiddle.Server{},
+		5: mobinthemiddle.Server{},
+		6: speeddaemon.Server{},
 	}
 
 	if *challengeNum == -1 {
